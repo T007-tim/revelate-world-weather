@@ -1,6 +1,17 @@
 // OpenWeatherMap API integration
-const API_KEY = "2c9a68cfce5d1a1dd1cf6edc27dbdd23"; // Demo key - users should replace with their own
+// Get your free API key at: https://openweathermap.org/api
+// 1. Sign up at https://home.openweathermap.org/users/sign_up
+// 2. Generate an API key from your account dashboard
+// 3. Replace the API_KEY below with your own key
+
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "YOUR_API_KEY_HERE";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
+
+if (API_KEY === "YOUR_API_KEY_HERE") {
+  console.warn(
+    "⚠️ OpenWeatherMap API key not configured. Get your free key at https://openweathermap.org/api"
+  );
+}
 
 export interface WeatherData {
   name: string;
@@ -45,11 +56,18 @@ export interface ForecastData {
 }
 
 export const getWeather = async (city: string): Promise<WeatherData> => {
+  if (API_KEY === "YOUR_API_KEY_HERE") {
+    throw new Error("Please configure your OpenWeatherMap API key. Get one free at https://openweathermap.org/api");
+  }
+  
   const response = await fetch(
     `${BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
   );
   
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Invalid API key. Please check your OpenWeatherMap API key configuration.");
+    }
     throw new Error("City not found");
   }
   
@@ -57,11 +75,18 @@ export const getWeather = async (city: string): Promise<WeatherData> => {
 };
 
 export const getForecast = async (city: string): Promise<ForecastData> => {
+  if (API_KEY === "YOUR_API_KEY_HERE") {
+    throw new Error("Please configure your OpenWeatherMap API key. Get one free at https://openweathermap.org/api");
+  }
+  
   const response = await fetch(
     `${BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
   );
   
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Invalid API key. Please check your OpenWeatherMap API key configuration.");
+    }
     throw new Error("Forecast not available");
   }
   
