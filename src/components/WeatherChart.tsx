@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Units } from "@/lib/weatherApi";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface ForecastItem {
@@ -11,9 +12,10 @@ interface ForecastItem {
 
 interface WeatherChartProps {
   forecast: ForecastItem[];
+  units?: Units;
 }
 
-export const WeatherChart = ({ forecast }: WeatherChartProps) => {
+export const WeatherChart = ({ forecast, units = "metric" }: WeatherChartProps) => {
   // Take every 3rd item to show 8 data points (24 hours of data)
   const chartData = forecast.slice(0, 8).map((item) => ({
     time: new Date(item.dt * 1000).toLocaleTimeString('en-US', {
@@ -42,7 +44,7 @@ export const WeatherChart = ({ forecast }: WeatherChartProps) => {
               yAxisId="temp"
               stroke="hsl(var(--primary))"
               style={{ fontSize: '12px' }}
-              label={{ value: 'Temperature (°C)', angle: -90, position: 'insideLeft' }}
+              label={{ value: `Temperature (°${units === "metric" ? "C" : "F"})`, angle: -90, position: 'insideLeft' }}
             />
             <YAxis 
               yAxisId="humidity"
@@ -67,7 +69,7 @@ export const WeatherChart = ({ forecast }: WeatherChartProps) => {
               strokeWidth={3}
               dot={{ fill: 'hsl(var(--primary))', r: 4 }}
               activeDot={{ r: 6 }}
-              name="Temperature (°C)"
+              name={`Temperature (°${units === "metric" ? "C" : "F"})`}
             />
             <Line
               yAxisId="humidity"

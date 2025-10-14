@@ -7,6 +7,9 @@
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "YOUR_API_KEY_HERE";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
+export type Units = "metric" | "imperial";
+const DEFAULT_UNITS: Units = "metric";
+
 if (API_KEY === "YOUR_API_KEY_HERE") {
   console.warn(
     "⚠️ OpenWeatherMap API key not configured. Get your free key at https://openweathermap.org/api"
@@ -55,13 +58,16 @@ export interface ForecastData {
   }>;
 }
 
-export const getWeather = async (city: string): Promise<WeatherData> => {
+export const getWeather = async (
+  city: string,
+  units: Units = DEFAULT_UNITS
+): Promise<WeatherData> => {
   if (API_KEY === "YOUR_API_KEY_HERE") {
     throw new Error("Please configure your OpenWeatherMap API key. Get one free at https://openweathermap.org/api");
   }
   
   const response = await fetch(
-    `${BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
+    `${BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${units}`
   );
   
   if (!response.ok) {
@@ -74,13 +80,16 @@ export const getWeather = async (city: string): Promise<WeatherData> => {
   return response.json();
 };
 
-export const getForecast = async (city: string): Promise<ForecastData> => {
+export const getForecast = async (
+  city: string,
+  units: Units = DEFAULT_UNITS
+): Promise<ForecastData> => {
   if (API_KEY === "YOUR_API_KEY_HERE") {
     throw new Error("Please configure your OpenWeatherMap API key. Get one free at https://openweathermap.org/api");
   }
   
   const response = await fetch(
-    `${BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
+    `${BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${units}`
   );
   
   if (!response.ok) {
@@ -90,5 +99,51 @@ export const getForecast = async (city: string): Promise<ForecastData> => {
     throw new Error("Forecast not available");
   }
   
+  return response.json();
+};
+
+export const getWeatherByCoords = async (
+  latitude: number,
+  longitude: number,
+  units: Units = DEFAULT_UNITS
+): Promise<WeatherData> => {
+  if (API_KEY === "YOUR_API_KEY_HERE") {
+    throw new Error("Please configure your OpenWeatherMap API key. Get one free at https://openweathermap.org/api");
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=${units}`
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Invalid API key. Please check your OpenWeatherMap API key configuration.");
+    }
+    throw new Error("Location not found");
+  }
+
+  return response.json();
+};
+
+export const getForecastByCoords = async (
+  latitude: number,
+  longitude: number,
+  units: Units = DEFAULT_UNITS
+): Promise<ForecastData> => {
+  if (API_KEY === "YOUR_API_KEY_HERE") {
+    throw new Error("Please configure your OpenWeatherMap API key. Get one free at https://openweathermap.org/api");
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=${units}`
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Invalid API key. Please check your OpenWeatherMap API key configuration.");
+    }
+    throw new Error("Forecast not available");
+  }
+
   return response.json();
 };
