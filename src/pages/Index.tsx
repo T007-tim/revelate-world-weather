@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { WeatherCard } from "@/components/WeatherCard";
 import { ForecastCard } from "@/components/ForecastCard";
 import { WeatherChart } from "@/components/WeatherChart";
-import { getWeather, getForecast, WeatherData, ForecastData } from "@/lib/weatherApi";
+import {
+  getWeather,
+  getForecast,
+  getWeatherByCoords,
+  getForecastByCoords,
+  WeatherData,
+  ForecastData,
+  Units,
+} from "@/lib/weatherApi";
 import { useToast } from "@/hooks/use-toast";
 import { Cloud, CloudRain, Sun, CloudSun } from "lucide-react";
 
@@ -11,18 +19,27 @@ const Index = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [forecastData, setForecastData] = useState<ForecastData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [units, setUnits] = useState<Units>(() => {
+    const stored = localStorage.getItem("weather:units");
+    return (stored as Units) || "metric";
+  });
+  const [lastCity, setLastCity] = useState<string | null>(() =>
+    localStorage.getItem("weather:lastCity")
+  );
   const { toast } = useToast();
 
   const handleSearch = async (city: string) => {
     setIsLoading(true);
     try {
       const [weather, forecast] = await Promise.all([
-        getWeather(city),
-        getForecast(city)
+        getWeather(city, units),
+        getForecast(city, units)
       ]);
       
       setWeatherData(weather);
       setForecastData(forecast);
+      setLastCity(city);
+      localStorage.setItem("weather:lastCity", city);
       
       toast({
         title: "Weather loaded successfully",
@@ -40,6 +57,76 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
+  const handleUseLocation = async () => {
+    if (!("geolocation" in navigator)) {
+      toast({
+        title: "Geolocation not supported",
+        description: "Your browser does not support geolocation.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const [weather, forecast] = await Promise.all([
+            getWeatherByCoords(latitude, longitude, units),
+            getForecastByCoords(latitude, longitude, units),
+          ]);
+
+          setWeatherData(weather);
+          setForecastData(forecast);
+          setLastCity(weather.name);
+          localStorage.setItem("weather:lastCity", weather.name);
+
+          toast({
+            title: "Weather loaded successfully",
+            description: `Showing weather for ${weather.name}, ${weather.sys.country}`,
+          });
+        } catch (error) {
+          toast({
+            title: "Error loading weather",
+            description: "Unable to fetch weather for your location.",
+            variant: "destructive",
+          });
+          setWeatherData(null);
+          setForecastData(null);
+        } finally {
+          setIsLoading(false);
+        }
+      },
+      (err) => {
+        setIsLoading(false);
+        toast({
+          title: "Location permission denied",
+          description: "Please allow location access or search by city.",
+          variant: "destructive",
+        });
+      },
+      { enableHighAccuracy: false, timeout: 10000 }
+    );
+  };
+
+  useEffect(() => {
+    localStorage.setItem("weather:units", units);
+    // If we already have data and the user toggles units, refetch with the new units
+    if (lastCity) {
+      // Re-run the search silently when units change
+      handleSearch(lastCity);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [units]);
+
+  useEffect(() => {
+    // Auto-load last searched city on initial mount
+    if (lastCity) {
+      handleSearch(lastCity);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-day relative overflow-hidden">
@@ -65,7 +152,14 @@ const Index = () => {
 
         {/* Search Bar */}
         <div className="mb-12 animate-slide-up">
-          <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+          <SearchBar
+            onSearch={handleSearch}
+            onUseLocation={handleUseLocation}
+            units={units}
+            onUnitsChange={setUnits}
+            isLoading={isLoading}
+            initialCity={lastCity ?? undefined}
+          />
         </div>
 
         {/* Loading State */}
@@ -79,11 +173,11 @@ const Index = () => {
         {/* Weather Display */}
         {weatherData && !isLoading && (
           <div className="space-y-6">
-            <WeatherCard data={weatherData} />
+            <WeatherCard data={weatherData} units={units} />
             {forecastData && (
               <>
-                <WeatherChart forecast={forecastData.list} />
-                <ForecastCard forecast={forecastData.list} />
+                <WeatherChart forecast={forecastData.list} units={units} />
+                <ForecastCard forecast={forecastData.list} units={units} />
               </>
             )}
           </div>

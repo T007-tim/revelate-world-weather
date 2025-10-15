@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Units } from "@/lib/weatherApi";
 
 interface ForecastItem {
   dt: number;
@@ -15,9 +16,10 @@ interface ForecastItem {
 
 interface ForecastCardProps {
   forecast: ForecastItem[];
+  units?: Units;
 }
 
-export const ForecastCard = ({ forecast }: ForecastCardProps) => {
+export const ForecastCard = ({ forecast, units = "metric" }: ForecastCardProps) => {
   // Group forecast by day (taking one entry per day)
   const dailyForecast = forecast.filter((item, index) => index % 8 === 0).slice(0, 5);
 
@@ -51,7 +53,7 @@ export const ForecastCard = ({ forecast }: ForecastCardProps) => {
                 className="w-16 h-16"
               />
               <p className="text-2xl font-bold text-primary mb-1">
-                {Math.round(item.main.temp)}°C
+                {Math.round(item.main.temp)}°{units === "metric" ? "C" : "F"}
               </p>
               <p className="text-xs text-muted-foreground capitalize text-center">
                 {item.weather[0].description}

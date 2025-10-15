@@ -1,5 +1,6 @@
 import { Cloud, Droplets, Wind, Sunrise, Sunset, Eye, Gauge } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Units } from "@/lib/weatherApi";
 
 interface WeatherData {
   name: string;
@@ -29,9 +30,10 @@ interface WeatherData {
 
 interface WeatherCardProps {
   data: WeatherData;
+  units?: Units;
 }
 
-export const WeatherCard = ({ data }: WeatherCardProps) => {
+export const WeatherCard = ({ data, units = "metric" }: WeatherCardProps) => {
   const formatTime = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -61,13 +63,13 @@ export const WeatherCard = ({ data }: WeatherCardProps) => {
               />
               <div>
                 <div className="text-7xl font-bold text-primary">
-                  {Math.round(data.main.temp)}°C
+                  {Math.round(data.main.temp)}°{units === "metric" ? "C" : "F"}
                 </div>
                 <p className="text-xl text-muted-foreground capitalize mt-2">
                   {data.weather[0].description}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Feels like {Math.round(data.main.feels_like)}°C
+                  Feels like {Math.round(data.main.feels_like)}°{units === "metric" ? "C" : "F"}
                 </p>
               </div>
             </div>
@@ -78,13 +80,13 @@ export const WeatherCard = ({ data }: WeatherCardProps) => {
                 <div className="flex items-center gap-2 justify-center md:justify-end">
                   <span className="text-muted-foreground">High:</span>
                   <span className="text-2xl font-semibold text-destructive">
-                    {Math.round(data.main.temp_max)}°C
+                    {Math.round(data.main.temp_max)}°
                   </span>
                 </div>
                 <div className="flex items-center gap-2 justify-center md:justify-end">
                   <span className="text-muted-foreground">Low:</span>
                   <span className="text-2xl font-semibold text-secondary">
-                    {Math.round(data.main.temp_min)}°C
+                    {Math.round(data.main.temp_min)}°
                   </span>
                 </div>
               </div>
@@ -107,7 +109,7 @@ export const WeatherCard = ({ data }: WeatherCardProps) => {
           <CardContent className="p-6 flex flex-col items-center text-center">
             <Wind className="h-8 w-8 text-primary mb-2" />
             <p className="text-sm text-muted-foreground mb-1">Wind Speed</p>
-            <p className="text-2xl font-bold">{data.wind.speed} m/s</p>
+            <p className="text-2xl font-bold">{data.wind.speed} {units === "metric" ? "m/s" : "mph"}</p>
           </CardContent>
         </Card>
 
