@@ -16,7 +16,7 @@ A modern, interactive weather dashboard delivering real-time updates and forecas
 ## 🚀 Quick Start
 
 ### Prerequisites
-
+-(https://revelate-world-weather.lovable.app)
 - Node.js 18+ and npm installed ([install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
 - OpenWeatherMap API key ([get one free here](https://openweathermap.org/api))
 
@@ -165,19 +165,13 @@ This project is open source and available under the MIT License.
 
 Built with ❤️ using [Lovable](https://lovable.dev)
 
-# Welcome to your Lovable project
+# Welcome to my weather forecast project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/c03aaf3f-898a-451b-97b9-9b4f4053cab5
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/c03aaf3f-898a-451b-97b9-9b4f4053cab5) and start prompting.
+## Visit the [Lovable Project](https://lovable.dev/projects/c03aaf3f-898a-451b-97b9-9b4f4053cab5) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
@@ -221,20 +215,10 @@ npm run dev
 
 This project is built with:
 
-- Vite
+- Python
 - TypeScript
 - React
-- shadcn-ui
+- HTML
 - Tailwind CSS
 
-## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/c03aaf3f-898a-451b-97b9-9b4f4053cab5) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
