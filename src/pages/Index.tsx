@@ -143,10 +143,10 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-6xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">
-            Revelate Weather
+            Anga-Yetu-Hub
           </h1>
           <p className="text-xl md:text-2xl text-white/90 drop-shadow-md max-w-2xl mx-auto">
-            Real-time weather insights from anywhere in the world
+            Your Sky, Your Hub — Real-time weather insights worldwide
           </p>
         </div>
 
@@ -188,7 +188,7 @@ const Index = () => {
           <div className="text-center py-20 animate-fade-in">
             <CloudSun className="w-32 h-32 text-white/80 mx-auto mb-6 animate-float" />
             <h2 className="text-3xl font-bold text-white mb-4">
-              Welcome to Revelate Weather
+              Welcome to Anga-Yetu-Hub
             </h2>
             <p className="text-xl text-white/90 max-w-lg mx-auto">
               Search for any city to reveal detailed weather information, forecasts, and trends
@@ -203,7 +203,7 @@ const Index = () => {
           Powered by OpenWeatherMap API | Built with React, Tailwind & Recharts
         </p>
         <p className="text-xs mt-2">
-          © 2025 Revelate Weather Dashboard
+          © 2025 Anga-Yetu-Hub — Your Sky, Your Hub
         </p>
       </footer>
     </div>
